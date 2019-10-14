@@ -1,0 +1,6 @@
+server:
+  port: 10001
+logging:
+  config: classpath:logback.xml  #日志文件路径
+  level:
+    org.apache.ibatis: DEBUG

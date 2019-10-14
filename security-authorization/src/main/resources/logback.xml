@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <!--日志打印-数据脱敏-->
+    <property name="LOG_HOME" value="/var/app/logs"/>
+    <property name="PATTERN" value="%red([%d{yyyy-MM-dd HH:mm:ss.SSS}])-%highlight([%level])-%green([%thread])-%boldMagenta([%logger.%M:%L])-%cyan(%msg%n)"/>
+    <!--info log -->
+    <appender name="info-rolling"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/app.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/app.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!--只接受 INFO 级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <appender name="error-rolling"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/app_error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/app_error.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!--ERROR 级别以上的日志都会集中在这里 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+    <appender name="warn-rolling"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/app_warn.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/app_warn.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!--WARN 级别以上的日志都会集中在这里 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="infoAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="info-rolling"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+    <appender name="errorAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="error-rolling"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+    <appender name="warnAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="warn-rolling"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+    <appender name="stdoutAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+    <logger name="com.dmf.authorization.dao" level="DEBUG" />
+    <root level="INFO">
+        <appender-ref ref="infoAppender"/>
+        <appender-ref ref="errorAppender"/>
+        <appender-ref ref="warnAppender"/>
+        <appender-ref ref="stdoutAppender"/>
+    </root>
+</configuration>
